@@ -97,6 +97,29 @@ function popup_settings_page()
         exit;
 
     }
+
+    if (isset($_GET['deleteProfile']) ) {
+        $profiles = get_option('popup_profiles', array());
+        $target_name = $_GET['deleteProfile'];
+        $found = false;
+
+        foreach ( $profiles as $index => $profile ) {
+            if ( $profile['name'] === $target_name ) {
+                unset($profiles[$index]);
+                $found = true;
+                break;
+            }
+        }
+
+        if ( $found ) {
+            $profiles = array_values($profiles);
+            
+            update_option('popup_profiles', $profiles);
+            
+            wp_redirect( admin_url('admin.php?page=wordpress-popup-settings') );
+            exit;
+        }
+    }
     ?>
     <style>
         ul.popup_profile_list {
@@ -128,8 +151,7 @@ function popup_settings_page()
                     <?php
                     foreach ($profiles as $profile) {
                         ?>
-                        <a href="admin.php?page=wordpress-popup-settings&profile=<?= $profile['name'] ?>">
-                            <li><?php if($profile['enabled']) { ?>
+                        <a href="admin.php?page=wordpress-popup-settings&profile=<?= $profile['name'] ?>"><li><?php if($profile['enabled']) { ?>
                             <span style="color: green; margin-right: 10px;">●</span>
                             <?php } else { ?>
                             <span style="color: red; margin-right: 10px;">●</span><?php } ?> 
@@ -197,6 +219,7 @@ function popup_settings_page()
                             value="<?php echo esc_attr($selected_profile['cookie_name']); ?>" style="width: 400px;" />
                         <br>
                         <?php submit_button('บันทึกการเปลี่ยนแปลง'); ?>
+                        <a href="admin.php?page=wordpress-popup-settings&deleteProfile=<?php echo esc_attr($selected_profile['name']); ?>">ลบ Profile นี้</a>
                     </form>
                     <?php
                 } else {
