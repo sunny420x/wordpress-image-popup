@@ -37,7 +37,8 @@ function popup_settings_page()
             'cookie_days_to_expire' => 7,
             'image_url' => '',
             'link_url' => '#',
-            'cookie_name' => 'popup_expire_in'
+            'cookie_name' => 'popup_expire_in',
+            'width' => 50
         ]
     ));
 
@@ -58,6 +59,7 @@ function popup_settings_page()
                 $profile['image_url']            = esc_url_raw($_POST['popup_image_url']);
                 $profile['link_url']             = esc_url_raw($_POST['popup_link_url']);
                 $profile['cookie_name']          = sanitize_title($_POST['popup_cookie_name']);
+                $profile['width']          = sanitize_title($_POST['width']);
                 
                 $found = true;
                 break; 
@@ -72,6 +74,7 @@ function popup_settings_page()
                 'image_url'            => esc_url_raw($_POST['popup_image_url']),
                 'link_url'             => esc_url_raw($_POST['popup_link_url']),
                 'cookie_name'          => sanitize_title($_POST['popup_cookie_name']),
+                'width'          => sanitize_title($_POST['width']),
             );
         }
 
@@ -89,6 +92,7 @@ function popup_settings_page()
             'image_url'            => esc_url_raw($_POST['popup_image_url']),
             'link_url'             => esc_url_raw($_POST['popup_link_url']),
             'cookie_name'          => sanitize_title($_POST['popup_cookie_name']),
+            'width'          => sanitize_title($_POST['width']),
         );
 
         update_option('popup_profiles', $profiles);
@@ -134,28 +138,25 @@ function popup_settings_page()
         }
 
         ul.popup_profile_list li:hover {
-            background: #d63384;
-            color: #fff;
-        }
-
-        ul.popup_profile_list a {
-            text-decoration: none;
+            background: #eee;
+            cursor: pointer;
         }
     </style>
     <div class="wrap" style="background: #fff; padding: 20px; border-radius: 10px; margin-top: 20px;">
         <div style="display: flex;">
             <div style="width: 300px; margin-right: 35px;">
-                <h1>โปรไฟล์ Popup ทั้งหมด</h1>
-                <a href="admin.php?page=wordpress-popup-settings">สร้างโปรไฟล์ใหม่</a>
+                <a href="/?popup_preview" target="_blank" class="button" style="width: 100%; margin: 10px 0;">👁️ ดูตัวอย่าง Popup ปัจจุบัน</a>
+                <a href="admin.php?page=wordpress-popup-settings" class="button" style="width: 100%;">➕ สร้างโปรไฟล์ใหม่</a>
+                <h1 style="margin-top: 10px;">📋 โปรไฟล์ Popup ทั้งหมด</h1>
                 <ul class="popup_profile_list">
                     <?php
                     foreach ($profiles as $profile) {
                         ?>
-                        <a href="admin.php?page=wordpress-popup-settings&profile=<?= $profile['name'] ?>"><li><?php if($profile['enabled']) { ?>
+                        <li onclick="window.location.href='admin.php?page=wordpress-popup-settings&profile=<?= $profile['name'] ?>'"><?php if($profile['enabled']) { ?>
                             <span style="color: green; margin-right: 10px;">●</span>
                             <?php } else { ?>
                             <span style="color: red; margin-right: 10px;">●</span><?php } ?> 
-                            <?= $profile['name'] ?></li></a>
+                            <?= $profile['name'] ?></li>
                         <?php
                     }
                     ?>
@@ -164,8 +165,7 @@ function popup_settings_page()
             <div>
                 <h1>✨ ระบบ Popup สำหรับ Wordpress</h1>
                 <p>ระบบ Popup แสดงรูปภาพ เช่น โมษณา สิทธิพิเศษ Artwork เทศกาลต่าง ๆ เป็นต้น ระบบจะแสดงแค่หน้า homepage</p>
-                <strong>* โปรดเลือกแสดง Popup แค่ 1 Profile เท่านั้น</strong>
-                <a href="/?popup_preview" target="_blank">ดูตัวอย่าง Popup</a>
+                <strong>* โปรดเลือกแสดง Popup แค่ 1 Profile เท่านั้น</strong><br>
                 <hr>
                 <?php
                 $selected_profile = array_find($profiles, function ($profile) {
@@ -178,7 +178,7 @@ function popup_settings_page()
                         <?php
                         settings_fields('popup_settings_group');
                         ?>
-                        <h1>แก้ไขโปรไฟล์: <strong><?=$selected_profile['name']?></strong></h1>
+                        <h1>✏️ แก้ไขโปรไฟล์: <strong><?=$selected_profile['name']?></strong></h1>
                         <h2>สถานะ Popup:</h2>
                         <select name="popup_enable" id="">
                             <option value="yes" <?php if ($selected_profile['enable'] == "yes") {
@@ -214,6 +214,9 @@ function popup_settings_page()
                         <h2>ลิงค์ของ Popup:</h2>
                         <input type="text" name="popup_link_url" value="<?php echo esc_attr($selected_profile['link_url']); ?>"
                             style="width: 400px;" />
+                        <h2>ความกว้างของ Popup (%):</h2>
+                        <input type="number" name="width"
+                            value="<?php echo esc_attr($selected_profile['width']); ?>" /> %
                         <h2>ชื่อ Cookie:</h2>
                         <input type="text" name="popup_cookie_name"
                             value="<?php echo esc_attr($selected_profile['cookie_name']); ?>" style="width: 400px;" />
@@ -225,44 +228,33 @@ function popup_settings_page()
                 } else {
                     ?>
                     <form action="admin.php?page=wordpress-popup-settings&newProfile" method="post">
-                        <h1>สร้างโปรไฟล์ Popup ใหม่</h1>
+                        <h1>✏️ สร้างโปรไฟล์ Popup ใหม่</h1>
                         <h2>ชื่อ Popup:</h2>
-                        <input type="text" name="popup_name" value="<?php echo esc_attr($selected_profile['name']); ?>"
-                            style="width: 400px;" />
+                        <input type="text" name="popup_name" style="width: 400px;" />
                         <h2>สถานะ Popup:</h2>
                         <select name="popup_enable" id="">
-                            <option value="yes" <?php if ($selected_profile['enable'] == "yes") {
-                                echo "selected";
-                            } ?>>เปิดการใช้งาน
+                            <option value="yes">เปิดการใช้งาน
                             </option>
-                            <option value="no" <?php if ($selected_profile['enable'] == "no") {
-                                echo "selected";
-                            } ?>>ปิดการใช้งาน
+                            <option value="no">ปิดการใช้งาน
                             </option>
                         </select>
                         <h2>จำนวนวันหมดอายุของ Popup:</h2>
-                        <input type="number" name="popup_cookie_days_to_expire"
-                            value="<?php echo esc_attr($selected_profile['cookie_days_to_expire']); ?>" /> วัน
+                        <input type="number" name="popup_cookie_days_to_expire" /> วัน
                         <h2>เลือกรูปภาพ Popup:</h2>
                         <div class="image-upload-wrapper">
-                            <input type="text" name="popup_image_url" id="popup_image_url"
-                                value="<?php echo esc_attr($selected_profile['image_url']); ?>" style="width: 400px;" />
+                            <input type="text" name="popup_image_url" id="popup_image_url" style="width: 400px;" />
     
                             <button type="button" class="button" id="upload_image_button">เลือกรูปภาพ...</button>
     
                             <div id="image_preview" style="margin-top: 10px;">
-                                <?php $banner_url = $selected_profile['image_url']; ?>
-                                <?php if ($banner_url): ?>
-                                    <img src="<?php echo esc_url($banner_url); ?>" style="max-width: 300px; border: 1px solid #ccc;" />
-                                <?php endif; ?>
                             </div>
                         </div>
+                        <h2>ความกว้างของ Popup (%):</h2>
+                        <input type="number" name="width" value="50" /> %
                         <h2>ลิงค์ของ Popup:</h2>
-                        <input type="text" name="popup_link_url" value="<?php echo esc_attr($selected_profile['link_url']); ?>"
-                            style="width: 400px;" />
+                        <input type="text" name="popup_link_url" value="" style="width: 400px;" />
                         <h2>ชื่อ Cookie:</h2>
-                        <input type="text" name="popup_cookie_name"
-                            value="<?php echo esc_attr($selected_profile['cookie_name']); ?>" style="width: 400px;" />
+                        <input type="text" name="popup_cookie_name" value="" style="width: 400px;" />
                         <?php submit_button('เพิ่มโปรไฟล์'); ?>
                     </form>
                 <?php
@@ -334,6 +326,7 @@ function wgc_render_image_popup()
     $image_url      = $selected_profile['image_url'] ?? '';
     $link_url       = $selected_profile['link_url'] ?? '#';
     $cookie_name    = $selected_profile['cookie_name'] ?? '';
+    $popup_width    = $selected_profile['width'] ?? 50;
     $days_to_expire = intval($selected_profile['cookie_days_to_expire'] ?? 7);
 
     if ( empty( $image_url ) ) return;
@@ -355,7 +348,7 @@ function wgc_render_image_popup()
 
         #wgc-popup-container {
             position: relative;
-            max-width: 90%;
+            max-width: <?=$popup_width;?>%;
             max-height: 90%;
             text-align: center;
         }
