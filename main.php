@@ -381,6 +381,12 @@ function wgc_render_image_popup()
             background: #d63384;
             color: #fff;
         }
+
+        @media screen and (max-width: 1200px) {
+            #wgc-popup-container {
+                max-width: 90%;
+            }
+        }
     </style>
 
     <div id="wgc-popup-overlay">
