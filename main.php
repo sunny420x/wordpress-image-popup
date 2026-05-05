@@ -11,7 +11,7 @@
 if (!defined('ABSPATH'))
     exit;
 
-add_action('wp_footer', 'wgc_render_image_popup');
+add_action('wp_footer', 'render_image_popup');
 add_action('admin_menu', 'popup_menu');
 
 function popup_menu()
@@ -320,7 +320,7 @@ function popup_settings_init()
     register_setting('popup_settings_group', 'popup_profiles');
 }
 
-function wgc_render_image_popup()
+function render_image_popup()
 {
     if (!is_front_page()) {
         return;
@@ -349,7 +349,7 @@ function wgc_render_image_popup()
     ?>
 
     <style>
-        #wgc-popup-overlay {
+        #popup-overlay {
             display: none;
             position: fixed;
             top: 0;
@@ -362,14 +362,15 @@ function wgc_render_image_popup()
             align-items: center;
         }
 
-        #wgc-popup-container {
+        #popup-container {
             position: relative;
             max-width: <?=$popup_width;?>%;
             max-height: 90%;
             text-align: center;
+            transition: 0.2s ease-in-out;
         }
 
-        #wgc-popup-container img {
+        #popup-container img {
             max-width: 100%;
             height: auto;
             border-radius: 8px;
@@ -377,7 +378,7 @@ function wgc_render_image_popup()
             cursor: pointer;
         }
 
-        #wgc-popup-close {
+        #popup-close {
             position: absolute;
             top: -10px;
             right: -15px;
@@ -393,21 +394,21 @@ function wgc_render_image_popup()
             transition: 0.3s;
         }
 
-        #wgc-popup-close:hover {
+        #popup-close:hover {
             background: #d63384;
             color: #fff;
         }
 
         @media screen and (max-width: 1200px) {
-            #wgc-popup-container {
+            #popup-container {
                 max-width: 90%;
             }
         }
     </style>
 
-    <div id="wgc-popup-overlay">
-        <div id="wgc-popup-container">
-            <div id="wgc-popup-close">X</div>
+    <div id="popup-overlay">
+        <div id="popup-container">
+            <div id="popup-close">X</div>
             <a href="<?php echo esc_url($link_url); ?>">
                 <img src="<?php echo esc_url($image_url); ?>" alt="Promotion">
             </a>
@@ -418,8 +419,8 @@ function wgc_render_image_popup()
         (function () {
             const popupName = "<?php echo $cookie_name; ?>";
             const expireDays = <?php echo $days_to_expire; ?>;
-            const overlay = document.getElementById('wgc-popup-overlay');
-            const closeBtn = document.getElementById('wgc-popup-close');
+            const overlay = document.getElementById('popup-overlay');
+            const closeBtn = document.getElementById('popup-close');
 
             // ฟังก์ชันอ่าน Cookie
             function getCookie(name) {
