@@ -392,10 +392,11 @@ function render_image_popup()
             cursor: pointer;
             border: 1.3px solid #333;
             transition: 0.3s;
+            opacity: 0.9;
         }
 
         #popup-close:hover {
-            background: #d63384;
+            background: #a8a8a8;
             color: #fff;
         }
 
