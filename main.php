@@ -204,7 +204,7 @@ function popup_settings_page()
     <div class="wrap">
         <div style="display: flex;">
             <div class="leftside">
-                <h1>Popup</h1>
+                <h1>📣 Popup</h1>
                 <div style="padding: 10px 20px 20px 20px;">
                     <a href="/?popup_preview" target="_blank" class="button" style="width: 100%; margin: 10px 0;">👁️ ดูตัวอย่าง
                         Popup ปัจจุบัน</a>
